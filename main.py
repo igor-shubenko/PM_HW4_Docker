@@ -11,6 +11,10 @@ app = FastAPI()
 # file_object = DataWorker('data.jsonl')
 file_object = DataWorkerByIndex('data.jsonl')
 
+@app.get('/hello')
+def hello():
+    return {"Message": "Hello students of PM group 1!"}
+
 @app.get('/get/{ind}')
 def get_record(ind: str):
     return file_object.get_record(ind)
