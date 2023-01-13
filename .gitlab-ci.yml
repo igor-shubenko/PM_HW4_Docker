@@ -1,1 +1,27 @@
+stages:
+  - build
+  - test
+  - deploy
 
+build:
+  stage: build
+  script: echo "$CI_JOB_NAME"
+
+unit:
+  stage: test
+  needs:
+    - build
+  script: echo "$CI_JOB_NAME"
+
+lint:
+  stage: test
+  script: echo "$CI_JOB_NAME"
+  when: always
+
+deploy:
+  stage: deploy
+  needs:
+    - lint
+    - unit
+  script: echo "$CI_JOB_NAME"
+  when: manual
