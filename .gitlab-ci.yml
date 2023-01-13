@@ -5,13 +5,13 @@ stages:
 
 build:
   tags:
-    - my_job
+    - docker-shared
   stage: build
   script: echo "$CI_JOB_NAME"
 
 unit:
   tags:
-    - my_job
+    - docker-shared
   stage: test
   needs:
     - build
@@ -19,14 +19,14 @@ unit:
 
 lint:
   tags:
-    - my_job
+    - docker-shared
   stage: test
   script: echo "$CI_JOB_NAME"
   when: always
 
 deploy:
   tags:
-    - my_job
+    - docker-shared
   stage: deploy
   needs:
     - lint
