@@ -4,21 +4,29 @@ stages:
   - deploy
 
 build:
+  tags:
+    - my_job
   stage: build
   script: echo "$CI_JOB_NAME"
 
 unit:
+  tags:
+    - my_job
   stage: test
   needs:
     - build
   script: echo "$CI_JOB_NAME"
 
 lint:
+  tags:
+    - my_job
   stage: test
   script: echo "$CI_JOB_NAME"
   when: always
 
 deploy:
+  tags:
+    - my_job
   stage: deploy
   needs:
     - lint
