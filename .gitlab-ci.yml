@@ -1,1 +1,74 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Docker.gitlab-ci.yml
 
+# Build a Docker image with CI/CD and push to the GitLab registry.
+# Docker-in-Docker documentation: https://docs.gitlab.com/ee/ci/docker/using_docker_build.html
+#
+# This template uses one generic job with conditional builds
+# for the default branch and all other (MR) branches.
+
+# docker-build:
+#   # Use the official docker image.
+#   image: docker:latest
+#   stage: build
+#   services:
+#     - docker:dind
+#   before_script:
+#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#   # Default branch leaves tag empty (= latest tag)
+#   # All other branches are tagged with the escaped branch name (commit ref slug)
+#   script:
+#     - |
+#       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+#         tag=""
+#         echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+#       else
+#         tag=":$CI_COMMIT_REF_SLUG"
+#         echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+#       fi
+#     - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
+#     - docker push "$CI_REGISTRY_IMAGE${tag}"
+#   # Run this job in a branch where a Dockerfile exists
+#   rules:
+#     - if: $CI_COMMIT_BRANCH
+#       exists:
+#         - Dockerfile
+
+
+#If commit was done to any branch, which name starts with “feature/” - build image, tag it with short hash of commit
+# and latest tags, and push these images to gitlab container registry of this repository
+build-image1:
+  stage: build
+  tags:
+    - docker-shared
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^hw_4_shubenko_docker$/
+  script:
+    - docker info
+    - echo "short-hash->$CI_COMMIT_SHORT_SHA"
+    - echo "commit ref name->$CI_COMMIT_REF_NAME"
+    - echo "contaier registry of repository->$CI_REGISTRY_IMAGE"
+    - echo "pipeline id->$CI_PIPELINE_ID"
+    - echo "gitlab container registry->$CI_REGISTRY"
+    - echo "default branch->$CI_DEFAULT_BRANCH"
+    - echo "commit tag->$CI_COMMIT_TAG"
+    - echo "branch tag->@CI_COMMIT_TAG"
+    - echo "ci merge request target branch name->$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    - echo "ci commit before sha->$CI_COMMIT_BEFORE_SHA"
+
+# If commit was done to master branch through merge request - 
+# build image, tag it with pipeline id and push image to gitlab container registry
+#build-image2:
+  #stage: build
+  # rules:
+    # - if: $CI_COMMIT_BRANCH == $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH and CI_COMMIT_BEFORE_SHA == 0000000000000000000000000000000000000000
+
+# If someone tag master branch - 
+# build image and tag it with branch’s tag and push it to gitlab container registry
+# build-image3:
+  #stage: build
+  # rules:
+    # -  if $CI_DEFAULT_BRANCH if tagged CI_COMMIT_TAG != ""
