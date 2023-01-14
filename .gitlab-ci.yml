@@ -42,6 +42,8 @@
 # and latest tags, and push these images to gitlab container registry of this repository
 build-image1:
   stage: build
+  tags:
+    - docker-shared
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^hw_4_shubenko_docker$/
   script:
