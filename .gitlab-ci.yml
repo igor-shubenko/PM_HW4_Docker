@@ -40,35 +40,48 @@
 
 #If commit was done to any branch, which name starts with “feature/” - build image, tag it with short hash of commit
 # and latest tags, and push these images to gitlab container registry of this repository
-build-image1:
+build_image_from_feature_branch:
   stage: build
   tags:
     - docker-shared
   rules:
-    - if: $CI_COMMIT_BRANCH =~ /^hw_4_shubenko_docker$/
+    - if: $CI_COMMIT_BRANCH =~ /^feature//
   script:
-    - docker info
-    - echo "short-hash->$CI_COMMIT_SHORT_SHA"
-    - echo "commit ref name->$CI_COMMIT_REF_NAME"
-    - echo "contaier registry of repository->$CI_REGISTRY_IMAGE"
-    - echo "pipeline id->$CI_PIPELINE_ID"
-    - echo "gitlab container registry->$CI_REGISTRY"
-    - echo "default branch->$CI_DEFAULT_BRANCH"
-    - echo "commit tag->$CI_COMMIT_TAG"
-    - echo "branch tag->@CI_COMMIT_TAG"
-    - echo "ci merge request target branch name->$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
-    - echo "ci commit before sha->$CI_COMMIT_BEFORE_SHA"
+    - echo "I need to build image and tag it with $CI_COMMIT_SHORT_SHA-latest"
+    - echo "Then i need to push it to gitlab container registry of this repo"
+    # - docker info
+    # - echo "short-hash->$CI_COMMIT_SHORT_SHA"
+    # - echo "commit ref name->$CI_COMMIT_REF_NAME"
+    # - echo "contaier registry of repository->$CI_REGISTRY_IMAGE"
+    # - echo "pipeline id->$CI_PIPELINE_ID"
+    # - echo "gitlab container registry->$CI_REGISTRY"
+    # - echo "default branch->$CI_DEFAULT_BRANCH"
+    # - echo "commit tag->$CI_COMMIT_TAG"
+    # - echo "branch tag->@CI_COMMIT_TAG"
+    # - echo "ci merge request target branch name->$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    # - echo "ci commit before sha->$CI_COMMIT_BEFORE_SHA"
 
 # If commit was done to master branch through merge request - 
 # build image, tag it with pipeline id and push image to gitlab container registry
-#build-image2:
-  #stage: build
-  # rules:
+build_image_from_merge_request_to_main:
+  stage: build
+  tags:
+    - docker-shared
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_BEFORE_SHA == 0000000000000000000000000000000000000000
+  script:
+    - echo "I need to build image, tag it with pipeline id and push it to gitlab container registry"
+    - echo "Pipeline id is --> $CI_PIPELINE_ID"
     # - if: $CI_COMMIT_BRANCH == $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH and CI_COMMIT_BEFORE_SHA == 0000000000000000000000000000000000000000
 
 # If someone tag master branch - 
 # build image and tag it with branch’s tag and push it to gitlab container registry
-# build-image3:
-  #stage: build
-  # rules:
+build-image3:
+  stage: build
+  tags:
+    - docker-shared
+  rules:
+    - if: if $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && CI_COMMIT_TAG != ""
     # -  if $CI_DEFAULT_BRANCH if tagged CI_COMMIT_TAG != ""
+  script:
+    - echo "I need to build image, tag it with CI_COMMIT_TAG -->$CI_COMMIT_TAG"
