@@ -45,7 +45,7 @@ build_image_from_feature_branch:
   tags:
     - docker-shared
   rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^feature//'
+    - if: '$CI_COMMIT_BRANCH =~ /^feature*/'
   script:
     - echo "I need to build image and tag it with $CI_COMMIT_SHORT_SHA-latest"
     - echo "Then i need to push it to gitlab container registry of this repo"
