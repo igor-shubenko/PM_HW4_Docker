@@ -6,9 +6,10 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
+RUN chmod +x /app/start_services.sh
 
-RUN  pip install "apache-airflow[celery]==2.5.0" --constraint  \
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt &&  \
+    pip install "apache-airflow[celery]==2.5.0" --constraint  \
      "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.0/constraints-3.10.txt"
 
 RUN adduser --disabled-password image_user
@@ -25,5 +26,5 @@ RUN airflow users create \
 
 EXPOSE 8080/tcp
 
-ENTRYPOINT ["airflow", "webserver"]
+ENTRYPOINT ["/bin/bash", "-c", "/app/start_services.sh"]
 
